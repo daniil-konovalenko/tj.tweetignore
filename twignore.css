@@ -1,0 +1,8 @@
+.tweetignore-block {
+    display: none
+}
+.tweetignore-block-button {
+    color: grey;
+    font-size: smaller;
+    margin-top: 20px;
+}

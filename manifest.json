@@ -2,5 +2,29 @@
     "name": "TJ.tweetignore",
     "version": "1.0",
     "description": "",
-    "manifest_version": 2
+    "manifest_version": 2,
+    "permissions": [
+        "storage",
+        "https://tjournal.ru/category/%D1%82%D0%B2%D0%B8%D1%82%D1%8B",
+        "https://tjournal.ru/category/%D1%82%D0%B2%D0%B8%D1%82%D1%8B/day",
+        "https://tjournal.ru/category/%D1%82%D0%B2%D0%B8%D1%82%D1%8B/week",
+        "https://tjournal.ru/category/%D1%82%D0%B2%D0%B8%D1%82%D1%8B/month",
+        "tabs",
+        "webNavigation"
+    ],
+    "background": {
+        "scripts": ["background.js"]
+    },
+    "content_scripts": [
+        {
+          "matches": [
+              "https://tjournal.ru/category/%D1%82%D0%B2%D0%B8%D1%82%D1%8B",
+              "https://tjournal.ru/category/%D1%82%D0%B2%D0%B8%D1%82%D1%8B/day",
+              "https://tjournal.ru/category/%D1%82%D0%B2%D0%B8%D1%82%D1%8B/week",
+              "https://tjournal.ru/category/%D1%82%D0%B2%D0%B8%D1%82%D1%8B/month"
+            ],
+          "js": ["twignore.js"],
+          "css": ["twignore.css"]
+        }
+      ]
 }
