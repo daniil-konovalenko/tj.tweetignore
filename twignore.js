@@ -1,44 +1,52 @@
-let blockedAuthors = new Set()
-function parseTwitterLink(link) {
-    return link.replace('https://twitter.com/', '')
-}
-function parseTweetAuthor(tweet) {
-    const authorTwitterLink = tweet.querySelector('.tweet__user > a').href;
-    return parseTwitterLink(authorTwitterLink)
-}
-function hideBlockedTweets(blockedAuthors) {
-    const tweetAuthorAnchors = document.querySelectorAll('.tweet > .tweet__user > a');
-    tweetAuthorAnchors.forEach(authorAnchor => {
-        let authorUsername = parseTwitterLink(authorAnchor.href);
-        if (blockedAuthors.has(authorUsername)) {
-            tweet = authorAnchor.parentElement.parentElement;
-            tweet.classList.add('tweetignore-block')
+class TweetsBlocker {
+    constructor(blockedAuthors) {
+        this.tweets = document.querySelectorAll('.tweet');
+        if (blockedAuthors !== undefined) {
+            this.blockedAuthors = new Set(blockedAuthors)
+        } else {
+            this.blockedAuthors = new Set();
         }
-    });
-}
-function blockUser(username) {
-    blockedAuthors.add(username);
-    chrome.storage.sync.set({twignoreAuthors: Array.from(blockedAuthors)}, function (){})
-    hideBlockedTweets(blockedAuthors);
-}
-function renderBlockButton(tweet) {
-    const tweetAuthor = parseTweetAuthor(tweet);
-    let blockButton = document.createElement('div');
-    blockButton.className = 'tweetignore-block-button';
-    blockButton.innerHTML = `<a href="#">Заблокировать</>`;
-    blockButton.addEventListener('click', function() {
-        blockUser(tweetAuthor);
-    })
-    let usernameElem = tweet.querySelector('.tweet__user');
-    usernameElem.appendChild(blockButton);
-}
-const tweets = document.querySelectorAll('.tweet');
-tweets.forEach(tweet => {
-    renderBlockButton(tweet);
-});
-chrome.storage.sync.get(['twignoreAuthors'], function(result) {
-    if (result.twignoreAuthors !== undefined) {
-        blockedAuthors = new Set(result.twignoreAuthors)
-        hideBlockedTweets(blockedAuthors);
     }
+
+    getTweetAuthor(tweet) {
+        const authorTwitterLink = tweet.querySelectorAll('.tweet__user > a')[0].href;
+        return authorTwitterLink.split('twitter.com/')[1];
+    }
+
+    hideBlockedTweets() {
+        const blockedtweets = Array.prototype.filter.call( this.tweets,
+            (tweet) => this.blockedAuthors.has(this.getTweetAuthor(tweet))
+        );
+
+        Array.prototype.forEach.call( blockedtweets,
+            (tweet) => tweet.classList.add('tweetignore-block')
+        );
+    }
+
+    blockUser(username) {
+        this.blockedAuthors.add(username);
+        chrome.storage.sync.set({twignoreAuthors: [...this.blockedAuthors]}, function (){})
+        this.hideBlockedTweets();
+    }
+
+    renderBlockButton(tweet) {
+        const tweetAuthor = this.getTweetAuthor(tweet);
+
+        let blockButton = document.createElement('div');
+        blockButton.className = 'tweetignore-block-button';
+        blockButton.innerHTML = `<a href="#">Заблокировать</>`;
+        blockButton.addEventListener('click', () =>  this.blockUser(tweetAuthor))
+
+        tweet.querySelector('.tweet__user').appendChild(blockButton);
+    }
+
+    init() {
+        this.tweets.forEach(tweet => this.renderBlockButton(tweet));
+        this.hideBlockedTweets();
+    }
+}
+
+chrome.storage.sync.get(['twignoreAuthors'], function(result) {
+    const Blocker = new TweetsBlocker(result.twignoreAuthors);
+    Blocker.init();
 })
