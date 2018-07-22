@@ -1,6 +1,3 @@
-// alert('started');
-// debugger;
-// alert('script executed');
 let blockedAuthors = new Set()
 function parseTwitterLink(link) {
     return link.replace('https://twitter.com/', '')
@@ -21,7 +18,7 @@ function hideBlockedTweets(blockedAuthors) {
 }
 function blockUser(username) {
     blockedAuthors.add(username);
-    chrome.storage.sync.set({twignoreAuthors: Array.from(blockedAuthors)})
+    chrome.storage.sync.set({twignoreAuthors: Array.from(blockedAuthors)}, function (){})
     hideBlockedTweets(blockedAuthors);
 }
 function renderBlockButton(tweet) {
@@ -41,7 +38,6 @@ tweets.forEach(tweet => {
 });
 chrome.storage.sync.get(['twignoreAuthors'], function(result) {
     if (result.twignoreAuthors !== undefined) {
-        debugger;
         blockedAuthors = new Set(result.twignoreAuthors)
         hideBlockedTweets(blockedAuthors);
     }

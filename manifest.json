@@ -10,10 +10,14 @@
         "https://tjournal.ru/category/%D1%82%D0%B2%D0%B8%D1%82%D1%8B/week",
         "https://tjournal.ru/category/%D1%82%D0%B2%D0%B8%D1%82%D1%8B/month",
         "tabs",
-        "webNavigation"
+        "webNavigation",
+        "declarativeContent"
     ],
     "background": {
         "scripts": ["background.js"]
+    },
+    "page_action": {
+        "default_popup": "popup.html"
     },
     "content_scripts": [
         {
