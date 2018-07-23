@@ -2,7 +2,7 @@ const storageAuthors = 'twignoreAuthors';
 
 class TweetsBlocker {
     constructor(authors) {
-        this.tweets = Array.from(document.querySelectorAll('.tweet'));
+        this.tweets = [...document.querySelectorAll('.tweet')];
         this.blockedAuthors = (authors !== undefined) ? new Set(authors) : new Set();
     }
 
