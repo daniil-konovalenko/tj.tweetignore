@@ -1,3 +1,5 @@
+const storageAuthors = 'twignoreAuthors';
+
 class TweetsBlocker {
     constructor(authors) {
         this.tweets = Array.from(document.querySelectorAll('.tweet'));
@@ -9,7 +11,7 @@ class TweetsBlocker {
         return authorTwitterLink.split('twitter.com/')[1];
     }
 
-    hideBlockedTweets(username) {
+    hideBlockedTweets() {
         this.tweets.filter(
             (tweet) => this.blockedAuthors.has(this.getTweetAuthor(tweet))
         ).forEach(
@@ -21,7 +23,7 @@ class TweetsBlocker {
         this.blockedAuthors.add(username);
         chrome.storage.sync.set(
             {twignoreAuthors: [...this.blockedAuthors]},
-            this.hideBlockedTweets(username)
+            this.hideBlockedTweets()
         );
     }
 
@@ -42,7 +44,7 @@ class TweetsBlocker {
     }
 }
 
-chrome.storage.sync.get(['twignoreAuthors'], function(result) {
-    const Blocker = new TweetsBlocker(result.twignoreAuthors);
+chrome.storage.sync.get([storageAuthors], function(result) {
+    const Blocker = new TweetsBlocker(result[storageAuthors]);
     Blocker.init();
 })
